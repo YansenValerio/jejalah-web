@@ -175,72 +175,56 @@ function MapScreen() {
   );
 }
 
-function XPScreen() {
+function MisiScreen() {
+  const misi = [
+    { nama: "Museum Batik", kategori: "Budaya", xp: 150, jarak: "1.2 km", status: "aktif" },
+    { nama: "Pantai Slamaran", kategori: "Alam", xp: 200, jarak: "3.5 km", status: "tersedia" },
+    { nama: "Pasar Banjarsari", kategori: "Kuliner", xp: 100, jarak: "0.8 km", status: "tersedia" },
+    { nama: "Klenteng Pho An Thian", kategori: "Religi", xp: 175, jarak: "2.1 km", status: "tersedia" },
+  ];
+
   return (
-    <div className="h-full flex flex-col gap-2 px-4 py-3 overflow-hidden">
-      {/* Level badge */}
-      <div
-        className="flex items-center gap-2 p-3 rounded-xl"
-        style={{ background: "rgba(255, 216, 135, 0.08)", border: "1px solid rgba(255, 216, 135, 0.2)" }}
-      >
+    <div className="h-full flex flex-col px-4 py-3 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="text-xs font-bold text-white">Misi Tersedia</div>
+          <div className="text-xs" style={{ color: "var(--text-muted)" }}>4 misi menunggumu</div>
+        </div>
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black"
-          style={{ background: "rgba(255, 216, 135, 0.15)", color: "var(--secondary)" }}
+          className="px-2 py-1 rounded-lg text-xs font-bold"
+          style={{ background: "rgba(104, 219, 174, 0.12)", color: "var(--accent)" }}
         >
-          7
-        </div>
-        <div>
-          <div className="text-xs font-bold text-white">Explorer Sejati</div>
-          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Level 7</div>
+          🔥 Streak 5
         </div>
       </div>
 
-      {/* XP Progress */}
-      <div className="p-3 rounded-xl" style={{ background: "var(--bg-surface)" }}>
-        <div className="flex justify-between text-xs mb-1.5">
-          <span className="font-semibold" style={{ color: "var(--secondary)" }}>1,240 XP</span>
-          <span style={{ color: "var(--text-dim)" }}>2,000 XP</span>
-        </div>
-        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+      {/* Mission list */}
+      <div className="flex flex-col gap-2 flex-1 overflow-hidden">
+        {misi.map((m) => (
           <div
-            className="h-full rounded-full"
-            style={{ width: "62%", background: "linear-gradient(to right, var(--primary), var(--secondary))" }}
-          />
-        </div>
-        <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>760 XP lagi ke Level 8</div>
-      </div>
-
-      {/* Streak */}
-      <div
-        className="flex items-center gap-2 p-3 rounded-xl"
-        style={{ background: "rgba(232, 86, 10, 0.1)", border: "1px solid rgba(232, 86, 10, 0.25)" }}
-      >
-        <span className="text-lg">🔥</span>
-        <div>
-          <div className="text-xs font-bold" style={{ color: "var(--primary-light)" }}>5 Hari Beruntun</div>
-          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Streak aktif!</div>
-        </div>
-      </div>
-
-      {/* Recent badges */}
-      <div>
-        <div className="text-xs font-semibold mb-2" style={{ color: "var(--text-dim)" }}>Badge Terbaru</div>
-        <div className="flex gap-2">
-          {[
-            { icon: "🏙️", label: "Kota Lama" },
-            { icon: "🍜", label: "Kuliner" },
-            { icon: "📸", label: "Fotografer" },
-          ].map((b) => (
+            key={m.nama}
+            className="flex items-center gap-2.5 p-2.5 rounded-xl flex-shrink-0"
+            style={{
+              background: m.status === "aktif" ? "rgba(232, 86, 10, 0.12)" : "var(--bg-surface)",
+              border: m.status === "aktif" ? "1px solid rgba(232, 86, 10, 0.3)" : "1px solid rgba(255,255,255,0.04)",
+            }}
+          >
+            {/* Status dot */}
             <div
-              key={b.label}
-              className="flex flex-col items-center gap-1 flex-1 py-2 rounded-xl"
-              style={{ background: "var(--bg-surface)" }}
-            >
-              <span className="text-base">{b.icon}</span>
-              <span className="text-[9px]" style={{ color: "var(--text-dim)" }}>{b.label}</span>
+              className="w-2 h-2 rounded-full flex-shrink-0"
+              style={{ background: m.status === "aktif" ? "var(--primary)" : "rgba(255,255,255,0.2)", boxShadow: m.status === "aktif" ? "0 0 6px var(--primary)" : "none" }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-white truncate">{m.nama}</div>
+              <div className="text-[9px]" style={{ color: "var(--text-muted)" }}>{m.kategori} • {m.jarak}</div>
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col items-end flex-shrink-0">
+              <div className="text-xs font-bold" style={{ color: "var(--secondary)" }}>+{m.xp}</div>
+              <div className="text-[9px]" style={{ color: "var(--text-dim)" }}>XP</div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -457,7 +441,7 @@ function PhoneMockup() {
 
   const navItems = [
     { icon: "🗺️", label: "Quest" },
-    { icon: "⚡", label: "XP" },
+    { icon: "📋", label: "Misi" },
     { icon: "🏆", label: "Board" },
     { icon: "🎁", label: "Reward" },
     { icon: "👤", label: "Profil" },
@@ -465,13 +449,13 @@ function PhoneMockup() {
 
   const screens = [
     <MapScreen key="map" />,
-    <XPScreen key="xp" />,
+    <MisiScreen key="misi" />,
     <LeaderboardScreen key="lb" />,
     <RewardsScreen key="rw" />,
     <ProfileScreen key="pf" />,
   ];
 
-  const screenTitles = ["Peta Quest", "XP & Level", "Leaderboard", "Reward", "Profil"];
+  const screenTitles = ["Peta Quest", "Misi", "Leaderboard", "Reward", "Profil"];
 
   return (
     <div className="relative">
