@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 
 const APK_LINK = "#download";
@@ -118,7 +121,358 @@ function Stat({ value, label, accent }: { value: string; label: string; accent?:
   );
 }
 
+// ─── Screen components ────────────────────────────────────────────────────────
+
+function MapScreen() {
+  return (
+    <div
+      className="h-full flex flex-col overflow-hidden rounded-2xl mx-3"
+      style={{
+        background: "linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 50%, #1a150a 100%)",
+        border: "1px solid rgba(104, 219, 174, 0.15)",
+      }}
+    >
+      <div className="relative flex-1 p-3">
+        {/* Fake map grid */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#68dbae" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+
+        {/* Quest markers */}
+        <QuestPin top="20%" left="35%" active />
+        <QuestPin top="45%" left="60%" />
+        <QuestPin top="60%" left="25%" />
+        <QuestPin top="35%" left="75%" />
+
+        {/* User location */}
+        <div
+          className="absolute w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--primary)", boxShadow: "0 0 12px var(--primary)" }}
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-white" />
+        </div>
+      </div>
+
+      {/* Quest card preview */}
+      <div
+        className="mx-3 mb-3 p-3 rounded-xl"
+        style={{ background: "rgba(255, 111, 49, 0.15)", border: "1px solid rgba(255, 111, 49, 0.3)" }}
+      >
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="text-xs font-bold text-white">Museum Batik</div>
+            <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Budaya • 1.2 km</div>
+          </div>
+          <div className="text-xs font-bold" style={{ color: "var(--secondary)" }}>+150 XP</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function XPScreen() {
+  return (
+    <div className="h-full flex flex-col gap-2 px-4 py-3 overflow-hidden">
+      {/* Level badge */}
+      <div
+        className="flex items-center gap-2 p-3 rounded-xl"
+        style={{ background: "rgba(255, 216, 135, 0.08)", border: "1px solid rgba(255, 216, 135, 0.2)" }}
+      >
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black"
+          style={{ background: "rgba(255, 216, 135, 0.15)", color: "var(--secondary)" }}
+        >
+          7
+        </div>
+        <div>
+          <div className="text-xs font-bold text-white">Explorer Sejati</div>
+          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Level 7</div>
+        </div>
+      </div>
+
+      {/* XP Progress */}
+      <div className="p-3 rounded-xl" style={{ background: "var(--bg-surface)" }}>
+        <div className="flex justify-between text-xs mb-1.5">
+          <span className="font-semibold" style={{ color: "var(--secondary)" }}>1,240 XP</span>
+          <span style={{ color: "var(--text-dim)" }}>2,000 XP</span>
+        </div>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+          <div
+            className="h-full rounded-full"
+            style={{ width: "62%", background: "linear-gradient(to right, var(--primary), var(--secondary))" }}
+          />
+        </div>
+        <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>760 XP lagi ke Level 8</div>
+      </div>
+
+      {/* Streak */}
+      <div
+        className="flex items-center gap-2 p-3 rounded-xl"
+        style={{ background: "rgba(232, 86, 10, 0.1)", border: "1px solid rgba(232, 86, 10, 0.25)" }}
+      >
+        <span className="text-lg">🔥</span>
+        <div>
+          <div className="text-xs font-bold" style={{ color: "var(--primary-light)" }}>5 Hari Beruntun</div>
+          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Streak aktif!</div>
+        </div>
+      </div>
+
+      {/* Recent badges */}
+      <div>
+        <div className="text-xs font-semibold mb-2" style={{ color: "var(--text-dim)" }}>Badge Terbaru</div>
+        <div className="flex gap-2">
+          {[
+            { icon: "🏙️", label: "Kota Lama" },
+            { icon: "🍜", label: "Kuliner" },
+            { icon: "📸", label: "Fotografer" },
+          ].map((b) => (
+            <div
+              key={b.label}
+              className="flex flex-col items-center gap-1 flex-1 py-2 rounded-xl"
+              style={{ background: "var(--bg-surface)" }}
+            >
+              <span className="text-base">{b.icon}</span>
+              <span className="text-[9px]" style={{ color: "var(--text-dim)" }}>{b.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardScreen() {
+  const entries = [
+    { rank: 1, name: "Dika S.", xp: "4,820", crown: true },
+    { rank: 2, name: "Rena M.", xp: "3,950", crown: false },
+    { rank: 3, name: "Fajar K.", xp: "3,201", crown: false },
+  ];
+
+  return (
+    <div className="h-full flex flex-col px-4 py-3 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-base">🏆</span>
+        <div>
+          <div className="text-xs font-bold text-white">Leaderboard</div>
+          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Kota Pekalongan</div>
+        </div>
+      </div>
+
+      {/* Top 3 */}
+      <div className="flex flex-col gap-2 flex-1">
+        {entries.map((e) => (
+          <div
+            key={e.rank}
+            className="flex items-center gap-2 p-2.5 rounded-xl"
+            style={{
+              background: e.rank === 1 ? "rgba(255, 216, 135, 0.1)" : "var(--bg-surface)",
+              border: e.rank === 1 ? "1px solid rgba(255, 216, 135, 0.25)" : "1px solid transparent",
+            }}
+          >
+            <div
+              className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0"
+              style={{
+                background: e.rank === 1 ? "rgba(255, 216, 135, 0.2)" : "rgba(255,255,255,0.05)",
+                color: e.rank === 1 ? "var(--secondary)" : "var(--text-dim)",
+              }}
+            >
+              {e.crown ? "👑" : e.rank}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-white truncate">{e.name}</div>
+            </div>
+            <div className="text-xs font-bold flex-shrink-0" style={{ color: "var(--secondary)" }}>
+              {e.xp} XP
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-2 my-2">
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
+        <span className="text-xs" style={{ color: "var(--text-dim)" }}>•••</span>
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
+      </div>
+
+      {/* My rank */}
+      <div
+        className="flex items-center gap-2 p-2.5 rounded-xl"
+        style={{ background: "rgba(232, 86, 10, 0.12)", border: "1px solid rgba(232, 86, 10, 0.3)" }}
+      >
+        <div
+          className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0"
+          style={{ background: "rgba(232, 86, 10, 0.2)", color: "var(--primary-light)" }}
+        >
+          47
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-semibold" style={{ color: "var(--primary-light)" }}>📍 Kamu</div>
+        </div>
+        <div className="text-xs font-bold flex-shrink-0" style={{ color: "var(--secondary)" }}>
+          1,240 XP
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RewardsScreen() {
+  const rewards = [
+    { name: "Batik Mahkota", desc: "Diskon 20%", xp: 1000, icon: "👘" },
+    { name: "Warung Mega", desc: "Gratis Es Teh", xp: 800, icon: "🍜" },
+    { name: "Workshop Batik", desc: "Gratis 1 Sesi", xp: 1500, icon: "🎨" },
+  ];
+
+  return (
+    <div className="h-full flex flex-col px-4 py-3 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="text-xs font-bold text-white">Reward UMKM</div>
+          <div className="text-xs" style={{ color: "var(--text-muted)" }}>Tukar XP kamu</div>
+        </div>
+        <div
+          className="px-2 py-1 rounded-lg text-xs font-bold"
+          style={{ background: "rgba(255, 216, 135, 0.15)", color: "var(--secondary)" }}
+        >
+          1,240 XP
+        </div>
+      </div>
+
+      {/* Reward list */}
+      <div className="flex flex-col gap-2 flex-1">
+        {rewards.map((r) => (
+          <div
+            key={r.name}
+            className="flex items-center gap-2.5 p-2.5 rounded-xl"
+            style={{ background: "var(--bg-surface)", border: "1px solid rgba(255,255,255,0.04)" }}
+          >
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
+              style={{ background: "rgba(104, 219, 174, 0.1)" }}
+            >
+              {r.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-white truncate">{r.name}</div>
+              <div className="text-xs" style={{ color: "var(--accent)" }}>{r.desc}</div>
+            </div>
+            <div className="flex flex-col items-end flex-shrink-0">
+              <div className="text-xs font-bold" style={{ color: "var(--secondary)" }}>{r.xp.toLocaleString()}</div>
+              <div className="text-[9px]" style={{ color: "var(--text-dim)" }}>XP</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProfileScreen() {
+  return (
+    <div className="h-full flex flex-col px-4 py-3 overflow-hidden">
+      {/* Avatar + name */}
+      <div className="flex flex-col items-center gap-2 mb-3">
+        <div
+          className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-black"
+          style={{ background: "linear-gradient(135deg, var(--primary), var(--secondary))", color: "white" }}
+        >
+          YV
+        </div>
+        <div className="text-center">
+          <div className="text-xs font-bold text-white">Yansen V.</div>
+          <div
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs mt-0.5"
+            style={{ background: "rgba(255, 216, 135, 0.12)", color: "var(--secondary)" }}
+          >
+            ⚡ Level 7 Explorer
+          </div>
+        </div>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {[
+          { value: "12", label: "Quest" },
+          { value: "1,240", label: "XP" },
+          { value: "5", label: "Badge" },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="flex flex-col items-center py-2 rounded-xl"
+            style={{ background: "var(--bg-surface)" }}
+          >
+            <div className="text-sm font-black text-white">{s.value}</div>
+            <div className="text-[9px]" style={{ color: "var(--text-dim)" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Badge row */}
+      <div className="mb-3">
+        <div className="text-xs font-semibold mb-1.5" style={{ color: "var(--text-dim)" }}>Koleksi Badge</div>
+        <div className="flex gap-1.5">
+          {["🏙️", "🍜", "📸", "🎨", "🌿"].map((b, i) => (
+            <div
+              key={i}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
+              style={{ background: "var(--bg-surface)", border: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              {b}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Action row */}
+      <div className="flex gap-2 mt-auto">
+        <button
+          className="flex-1 py-2 rounded-xl text-xs font-semibold"
+          style={{ background: "rgba(232, 86, 10, 0.15)", color: "var(--primary-light)", border: "1px solid rgba(232, 86, 10, 0.25)" }}
+        >
+          Edit Profil
+        </button>
+        <button
+          className="flex-1 py-2 rounded-xl text-xs font-semibold"
+          style={{ background: "var(--bg-surface)", color: "var(--text-muted)" }}
+        >
+          Bagikan
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Phone mockup shell ───────────────────────────────────────────────────────
+
 function PhoneMockup() {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const navItems = [
+    { icon: "🗺️", label: "Quest" },
+    { icon: "⚡", label: "XP" },
+    { icon: "🏆", label: "Board" },
+    { icon: "🎁", label: "Reward" },
+    { icon: "👤", label: "Profil" },
+  ];
+
+  const screens = [
+    <MapScreen key="map" />,
+    <XPScreen key="xp" />,
+    <LeaderboardScreen key="lb" />,
+    <RewardsScreen key="rw" />,
+    <ProfileScreen key="pf" />,
+  ];
+
+  const screenTitles = ["Peta Quest", "XP & Level", "Leaderboard", "Reward", "Profil"];
+
   return (
     <div className="relative">
       {/* Glow behind phone */}
@@ -146,83 +500,50 @@ function PhoneMockup() {
             <span className="text-xs font-medium" style={{ color: "var(--text-dim)" }}>9:41</span>
             <div className="w-20 h-5 rounded-full" style={{ background: "var(--bg-surface)" }} />
             <div className="flex gap-1">
-              {[1,2,3].map(i => (
+              {[1, 2, 3].map((i) => (
                 <div key={i} className="w-1 rounded-full" style={{ height: `${i * 4}px`, background: "var(--text-dim)", alignSelf: "flex-end" }} />
               ))}
             </div>
           </div>
 
           {/* App header */}
-          <div className="px-4 pt-3 pb-2">
+          <div className="px-4 pt-2 pb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Image src="/icon.png" alt="Jejalah" width={28} height={28} className="rounded-lg" />
+              <Image src="/icon.png" alt="Jejalah" width={24} height={24} className="rounded-lg" />
               <span className="font-display font-black text-sm" style={{ color: "var(--primary-light)" }}>JEJALAH</span>
             </div>
+            <span className="text-xs font-medium" style={{ color: "var(--text-dim)" }}>{screenTitles[activeTab]}</span>
           </div>
 
-          {/* Map area */}
-          <div
-            className="mx-4 rounded-2xl flex-1 flex flex-col overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 50%, #1a150a 100%)",
-              border: "1px solid rgba(104, 219, 174, 0.15)",
-            }}
-          >
-            {/* Grid lines (map simulation) */}
-            <div className="relative flex-1 p-3">
-              {/* Fake map grid */}
-              <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#68dbae" strokeWidth="0.5"/>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-              </svg>
-
-              {/* Quest markers */}
-              <QuestPin top="20%" left="35%" active />
-              <QuestPin top="45%" left="60%" />
-              <QuestPin top="60%" left="25%" />
-              <QuestPin top="35%" left="75%" />
-
-              {/* User location */}
-              <div
-                className="absolute w-5 h-5 rounded-full flex items-center justify-center"
-                style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--primary)", boxShadow: "0 0 12px var(--primary)" }}
-              >
-                <div className="w-2.5 h-2.5 rounded-full bg-white" />
-              </div>
-            </div>
-
-            {/* Quest card preview */}
-            <div
-              className="mx-3 mb-3 p-3 rounded-xl"
-              style={{ background: "rgba(255, 111, 49, 0.15)", border: "1px solid rgba(255, 111, 49, 0.3)" }}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-xs font-bold text-white">Museum Batik</div>
-                  <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Budaya • 1.2 km</div>
-                </div>
-                <div className="text-xs font-bold" style={{ color: "var(--secondary)" }}>+150 XP</div>
-              </div>
-            </div>
+          {/* Screen content */}
+          <div className="flex-1 overflow-hidden">
+            {screens[activeTab]}
           </div>
 
           {/* Bottom nav */}
           <div
-            className="flex justify-around items-center px-4 py-3 mx-4 mb-3 mt-2 rounded-2xl"
+            className="flex justify-around items-end px-3 py-2 mx-3 mb-3 mt-1 rounded-2xl"
             style={{ background: "var(--bg-surface)", border: "1px solid rgba(255, 111, 49, 0.1)" }}
           >
-            {["🗺️", "⚡", "🏆", "🎁", "👤"].map((icon, i) => (
-              <div
+            {navItems.map((item, i) => (
+              <button
                 key={i}
-                className="w-8 h-8 rounded-xl flex items-center justify-center text-base"
-                style={i === 0 ? { background: "rgba(232, 86, 10, 0.2)" } : {}}
+                onClick={() => setActiveTab(i)}
+                className="flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl transition-all duration-200 cursor-pointer"
+                style={
+                  i === activeTab
+                    ? { background: "rgba(232, 86, 10, 0.2)" }
+                    : { background: "transparent" }
+                }
               >
-                {icon}
-              </div>
+                <span className="text-sm leading-none">{item.icon}</span>
+                <span
+                  className="text-[8px] font-semibold leading-none"
+                  style={{ color: i === activeTab ? "var(--primary-light)" : "var(--text-dim)" }}
+                >
+                  {item.label}
+                </span>
+              </button>
             ))}
           </div>
         </div>
