@@ -1,4 +1,4 @@
-export const APK_LINK = "#";
+export const APK_LINK = "https://drive.google.com/file/d/1wQaKlCkHYLa2LmoumJMZ5jNnkUwsWQ2-/view?usp=drivesdk";
 
 export default function DownloadSection() {
   return (
