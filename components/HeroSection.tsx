@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const APK_LINK = "#download";
+const APK_LINK = "https://drive.google.com/file/d/1wQaKlCkHYLa2LmoumJMZ5jNnkUwsWQ2-/view?usp=drivesdk";
 
 export default function HeroSection() {
   return (
